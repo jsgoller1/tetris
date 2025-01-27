@@ -31,6 +31,14 @@ class Tetris:
                 self._music_player.unpause()
             else:
                 self._music_player.pause()
+        elif action == GameAction.MoveLeft:
+            self._game_board.active_tile_move_left()
+        elif action == GameAction.MoveRight:
+            self._game_board.active_tile_move_right()
+        elif action == GameAction.Rotate:
+            self._game_board.active_tile_rotate()
+        elif action == GameAction.HardDrop:
+            self._game_board.active_tile_hard_drop()
 
     def on_loop(self):
         current_time = pygame.time.get_ticks()
@@ -40,6 +48,9 @@ class Tetris:
 
             # Update score if rows were cleared
             if rows_cleared > 0:
+                self._music_player.pause()
+                self._music_player.play_line_clear()
+                self._music_player.unpause()
                 self._score_keeper.add_cleared_lines(rows_cleared)
 
             self._last_update = current_time

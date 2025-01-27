@@ -10,6 +10,14 @@ class Tile(ABC):
         self.root_y = root_y
         self.rotation = 0
 
+    def move_left(self):
+        """Move the tile left one space"""
+        self.root_x -= 1
+
+    def move_right(self):
+        """Move the tile right one space"""
+        self.root_x += 1
+
     def move_down(self):
         """Move the tile down one space"""
         self.root_y += 1

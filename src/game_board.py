@@ -103,3 +103,44 @@ class GameBoard:
             next_piece_positions=self.tile_queue[0].get_blocks(),
             next_piece_color=self.tile_queue[0].get_color(),
         )
+
+    def active_tile_move_left(self):
+        # Temporarily move left and check if any blocks would be outside board
+        self.active_tile.move_left()
+        for x, y in self.active_tile.get_blocks():
+            if x < 0:
+                # Undo move if it would go outside
+                self.active_tile.move_right()
+                return
+
+    def active_tile_move_right(self):
+        # Temporarily move right and check if any blocks would be outside board
+        self.active_tile.move_right()
+        for x, y in self.active_tile.get_blocks():
+            if x >= self.width:
+                # Undo move if it would go outside
+                self.active_tile.move_left()
+                return
+
+    def active_tile_rotate(self):
+        self.active_tile.rotate()
+
+        # Check if any blocks are outside the board and adjust
+        min_x = min(x for x, y in self.active_tile.get_blocks())
+        max_x = max(x for x, y in self.active_tile.get_blocks())
+
+        # Move piece right if it extends past left edge
+        while min_x < 0:
+            self.active_tile.move_right()
+            min_x = min(x for x, y in self.active_tile.get_blocks())
+
+        # Move piece left if it extends past right edge
+        while max_x >= self.width:
+            self.active_tile.move_left()
+            max_x = max(x for x, y in self.active_tile.get_blocks())
+
+    def active_tile_hard_drop(self):
+        while not self._active_tile_will_collide():
+            self.active_tile.move_down()
+        self._lock_active_tile()
+        return self._clear_rows()

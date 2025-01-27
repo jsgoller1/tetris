@@ -12,7 +12,10 @@ class Renderer:
         )
 
         # Define regions for different components
-        self.board_region = pygame.Rect(50, 50, 200, 400)  # Main game board
+        self.board_region = pygame.Rect(50, 10, 200, 440)  # Main game board
+        self.board_outline_region = pygame.Rect(
+            50, 50, 200, 400
+        )  # Outline region doesn't include hidden part
         self.next_piece_region = pygame.Rect(300, 50, 100, 100)  # Next piece preview
         self.scoreboard_region = pygame.Rect(300, 200, 200, 200)  # Scoreboard
 
@@ -39,6 +42,10 @@ class Renderer:
 
         # Draw the active piece
         for x, y in game_board.active_piece_positions:
+            # Skip the first two hidden rows for the active piece,
+            # since they are not visible to the player
+            if y < 2:
+                continue
             pygame.draw.rect(
                 self._display_surf,
                 game_board.active_piece_color.value,
@@ -97,7 +104,9 @@ class Renderer:
         self._draw_scoreboard(scoreboard)
 
         # Draw borders around regions
-        pygame.draw.rect(self._display_surf, (128, 128, 128), self.board_region, 2)
+        pygame.draw.rect(
+            self._display_surf, (128, 128, 128), self.board_outline_region, 2
+        )
         pygame.draw.rect(self._display_surf, (128, 128, 128), self.next_piece_region, 2)
         pygame.draw.rect(self._display_surf, (128, 128, 128), self.scoreboard_region, 2)
 

@@ -65,3 +65,13 @@ class MusicPlayer:
     def is_playing(self) -> bool:
         """Check if music is currently playing"""
         return pygame.mixer.music.get_busy() and not self.is_paused
+
+    def play_line_clear(self):
+        """Play a sound when a line is cleared"""
+        # pygame.mixer.music can only play one track at a time
+        # For sound effects, use pygame.mixer.Sound instead
+        try:
+            sound = pygame.mixer.Sound("media/line_clear.mp3")
+            sound.play()
+        except pygame.error:
+            print("Error playing line clear sound effect")
