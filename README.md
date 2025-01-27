@@ -1,5 +1,5 @@
 # tetris
-Tetris implementation in Python; I wrote this to test out the editor Cursor. 
+Tetris implementation in Python; I wrote this in an evening to test out [Cursor](https://www.cursor.com/). 
 
 ![Tetris Game](media/tetris.png)
 
