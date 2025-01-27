@@ -8,10 +8,12 @@ Clone the repo, cd into it, then:
 ```
 python3 -m venv ./venv
 source venv/bin/activate
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## Gameplay
+Start the game with `python3 run.py` (this will take a few seconds
+the first time you run it). Then:
 - Left arrow / right arrow to control
 - Up button to rotate
 - Down to hard drop
