@@ -1,8 +1,7 @@
-from typing import List
-
+from typing import List, Tuple
 from src.tile import Tile, TileGenerator
 from src.tile import Color
-from src.render_data import RenderData
+from src.render_data import GameBoardRenderData
 
 
 class GameBoard:
@@ -66,21 +65,41 @@ class GameBoard:
     def _is_row_full(self, row_idx: int):
         return all(self.grid[row_idx])
 
-    def _clear_row(self, row_idx: int):
-        self.grid[row_idx] = [None for _ in range(self.width)]
+    def _clear_rows(self) -> int:
+        """Clear full rows and return number of rows cleared"""
+        rows_cleared = 0
+        y = self.height - 1
+        while y >= 0:
+            if self._is_row_full(y):
+                # Move all rows above down
+                for row in range(y, 0, -1):
+                    self.grid[row] = self.grid[row - 1][:]
+                # Clear top row
+                self.grid[0] = [None for _ in range(self.width)]
+                rows_cleared += 1
+            else:
+                y -= 1
+        return rows_cleared
 
-    def on_loop(self):
+    def on_loop(self) -> int:
+        """
+        Update game board state and return number of rows cleared
+        Returns:
+            int: Number of rows cleared in this update
+        """
         if self._active_tile_will_collide():
             self._lock_active_tile()
-            for y, _ in enumerate(self.grid):
-                if self._is_row_full(y):
-                    self._clear_row(y)
+            return self._clear_rows()
         else:
             self.active_tile.move_down()
+            return 0
 
-    def get_render_data(self) -> RenderData:
-        return RenderData(
+    def get_render_data(self) -> GameBoardRenderData:
+        """Get the current game board state for rendering"""
+        return GameBoardRenderData(
             grid_colors=self.grid,
             active_piece_positions=self.active_tile.get_blocks(),
             active_piece_color=self.active_tile.get_color(),
+            next_piece_positions=self.tile_queue[0].get_blocks(),
+            next_piece_color=self.tile_queue[0].get_color(),
         )
