@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from color import Color
+from src.color import Color
+
 from random import choice
 
 
@@ -9,13 +10,17 @@ class Tile(ABC):
         self.root_y = root_y
         self.rotation = 0
 
+    def move_down(self):
+        """Move the tile down one space"""
+        self.root_y += 1
+
     @abstractmethod
     def rotate(self):
         """Rotate the tile 90 degrees clockwise"""
         pass
 
     @abstractmethod
-    def get_blocks(self):
+    def get_blocks(self) -> list[tuple[int, int]]:
         """Return list of (x,y) coordinates of blocks relative to root position"""
         pass
 

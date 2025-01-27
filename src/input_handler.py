@@ -1,5 +1,5 @@
 import pygame
-from game_action import GameAction
+from src.game_action import GameAction
 
 
 class InputHandler:
