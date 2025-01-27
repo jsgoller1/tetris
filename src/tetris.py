@@ -5,12 +5,19 @@ from src.game_board import GameBoard
 from src.game_action import GameAction
 from src.music_player import MusicPlayer
 from src.score_keeper import ScoreKeeper
+from enum import Enum
+
+
+class GameState(Enum):
+    Running = 0
+    Paused = 1
+    GameOver = 2
 
 
 class Tetris:
     def __init__(self, width=550, height=500):
         pygame.init()
-        self._running = True
+        self._game_status = GameState.Running
         self._renderer = Renderer(width, height)
         self._input_handler = InputHandler()
         self._game_board = GameBoard()
@@ -25,13 +32,21 @@ class Tetris:
 
         action = self._input_handler.handle_input(event)
         if action == GameAction.Quit:
-            self._running = False
+            self._game_status = GameState.GameOver
+            return
         elif action == GameAction.Pause:
-            if self._music_player.is_paused:
-                self._music_player.unpause()
-            else:
+            if self._game_status == GameState.Running:
+                self._game_status = GameState.Paused
                 self._music_player.pause()
-        elif action == GameAction.MoveLeft:
+            else:
+                self._music_player.unpause()
+                self._game_status = GameState.Running
+
+        # If game is not running, don't process any other actions
+        if not self._game_status == GameState.Running:
+            return
+
+        if action == GameAction.MoveLeft:
             self._game_board.active_tile_move_left()
         elif action == GameAction.MoveRight:
             self._game_board.active_tile_move_right()
@@ -42,7 +57,10 @@ class Tetris:
 
     def on_loop(self):
         if self._game_board.is_game_over():
-            self._running = False
+            self._game_status = GameState.GameOver
+            return
+
+        if self._game_status == GameState.Paused:
             return
 
         current_time = pygame.time.get_ticks()
@@ -69,7 +87,7 @@ class Tetris:
         pygame.quit()
 
     def on_execute(self):
-        while self._running:
+        while self._game_status != GameState.GameOver:
             for event in pygame.event.get():
                 self.on_event(event)
             self.on_loop()

@@ -3,8 +3,24 @@ Tetris implementation in Python; I wrote this in an evening to test out [Cursor]
 
 ![Tetris Game](media/tetris.png)
 
+## Setup
+Clone the repo, cd into it, then:
+```
+python3 -m venv ./venv
+source venv/bin/activate
+pip3 install requirements.txt
+```
 
-## Game loop 
+## Gameplay
+- Left arrow / right arrow to control
+- Up button to rotate
+- Down to hard drop
+- Space to pause
+- ESC to quit
+
+
+## Design notes
+### Game loop 
 - setup
     - Start pygame
     - zero score
@@ -23,7 +39,7 @@ Tetris implementation in Python; I wrote this in an evening to test out [Cursor]
     - attempt to move active tile down one square. If blocked, fill all occupied squares with
       boxes of same color and clear active tile. 
 
-## Enhancements (once game MVP works)
+### Enhancements (once game MVP works)
 - Actually display next piece 
 - Draw shadow 
 - level progressions with speedup

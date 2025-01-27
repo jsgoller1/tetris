@@ -128,5 +128,4 @@ class Renderer:
     def on_loop(
         self, game_board: GameBoardRenderData, scoreboard: ScoreboardRenderData
     ):
-        print(f"Drawing score board: {scoreboard.score}")
         self.draw(game_board, scoreboard)
