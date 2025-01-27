@@ -1,5 +1,8 @@
-# PyTetris
+# tetris
 Tetris implementation in Python; I wrote this to test out the editor Cursor. 
+
+![Tetris Game](media/tetris.png)
+
 
 ## Game loop 
 - setup
