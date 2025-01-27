@@ -18,7 +18,7 @@ class GameBoard:
         ]
         self.tile_generator = TileGenerator()
         self.spawn_x = width // 2
-        self.spawn_y = 0
+        self.spawn_y = 2
         self.active_tile: Tile = self.tile_generator.next_tile(
             self.spawn_x, self.spawn_y
         )
