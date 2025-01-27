@@ -8,7 +8,7 @@ from src.score_keeper import ScoreKeeper
 
 
 class Tetris:
-    def __init__(self, width=1024, height=768):
+    def __init__(self, width=550, height=500):
         pygame.init()
         self._running = True
         self._renderer = Renderer(width, height)
@@ -41,6 +41,10 @@ class Tetris:
             self._game_board.active_tile_hard_drop()
 
     def on_loop(self):
+        if self._game_board.is_game_over():
+            self._running = False
+            return
+
         current_time = pygame.time.get_ticks()
         if current_time - self._last_update >= self._update_delay:
             # Update game board and get number of cleared lines
@@ -48,9 +52,6 @@ class Tetris:
 
             # Update score if rows were cleared
             if rows_cleared > 0:
-                self._music_player.pause()
-                self._music_player.play_line_clear()
-                self._music_player.unpause()
                 self._score_keeper.add_cleared_lines(rows_cleared)
 
             self._last_update = current_time

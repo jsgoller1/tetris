@@ -17,7 +17,7 @@ class Renderer:
             50, 50, 200, 400
         )  # Outline region doesn't include hidden part
         self.next_piece_region = pygame.Rect(300, 50, 100, 100)  # Next piece preview
-        self.scoreboard_region = pygame.Rect(300, 200, 200, 200)  # Scoreboard
+        self.scoreboard_region = pygame.Rect(300, 200, 150, 140)  # Scoreboard
 
         # Initialize font for text rendering
         pygame.font.init()
@@ -58,13 +58,25 @@ class Renderer:
             )
 
         # Draw the next piece preview
+        # Center the next piece in the preview region
+        min_x = min(x for x, y in game_board.next_piece_positions)
+        max_x = max(x for x, y in game_board.next_piece_positions)
+        min_y = min(y for x, y in game_board.next_piece_positions)
+        max_y = max(y for x, y in game_board.next_piece_positions)
+
+        piece_width = (max_x - min_x + 1) * block_size
+        piece_height = (max_y - min_y + 1) * block_size
+
+        x_offset = (self.next_piece_region.width - piece_width) // 2
+        y_offset = (self.next_piece_region.height - piece_height) // 2
+
         for x, y in game_board.next_piece_positions:
             pygame.draw.rect(
                 self._display_surf,
                 game_board.next_piece_color.value,
                 (
-                    self.next_piece_region.x + x * block_size,
-                    self.next_piece_region.y + y * block_size,
+                    self.next_piece_region.x + x_offset + (x - min_x) * block_size,
+                    self.next_piece_region.y + y_offset + (y - min_y) * block_size,
                     block_size - 1,
                     block_size - 1,
                 ),
@@ -76,7 +88,7 @@ class Renderer:
             f"Score: {scoreboard.score}", True, (255, 255, 255)
         )
         self._display_surf.blit(
-            score_text, (self.scoreboard_region.x, self.scoreboard_region.y)
+            score_text, (self.scoreboard_region.x + 25, self.scoreboard_region.y + 10)
         )
 
         # Draw level
@@ -84,7 +96,7 @@ class Renderer:
             f"Level: {scoreboard.level}", True, (255, 255, 255)
         )
         self._display_surf.blit(
-            level_text, (self.scoreboard_region.x, self.scoreboard_region.y + 40)
+            level_text, (self.scoreboard_region.x + 25, self.scoreboard_region.y + 50)
         )
 
         # Draw lines cleared
@@ -92,7 +104,7 @@ class Renderer:
             f"Lines: {scoreboard.lines_cleared}", True, (255, 255, 255)
         )
         self._display_surf.blit(
-            lines_text, (self.scoreboard_region.x, self.scoreboard_region.y + 80)
+            lines_text, (self.scoreboard_region.x + 25, self.scoreboard_region.y + 90)
         )
 
     def draw(self, game_board: GameBoardRenderData, scoreboard: ScoreboardRenderData):
@@ -116,4 +128,5 @@ class Renderer:
     def on_loop(
         self, game_board: GameBoardRenderData, scoreboard: ScoreboardRenderData
     ):
+        print(f"Drawing score board: {scoreboard.score}")
         self.draw(game_board, scoreboard)

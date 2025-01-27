@@ -27,11 +27,7 @@ class GameBoard:
     def is_game_over(self):
         # Check the two hidden rows (20 and 21 if 0-based indexing)
         return any(
-            [
-                self.grid[row][col]
-                for col in range(self.width)
-                for row in range(self.height - 2, self.height)
-            ]
+            [self.grid[row][col] for col in range(self.width) for row in range(3)]
         )
 
     def _add_tile(self):
@@ -43,15 +39,20 @@ class GameBoard:
             self.tile_generator.next_tile(self.spawn_x, self.spawn_y)
         )
 
-    def _active_tile_will_collide(self):
+    def _active_tile_will_collide(self, dx=0, dy=1):
         for block in self.active_tile.get_blocks():
-            # Check if block would hit bottom of screen
-            if block[1] + 1 >= self.height:
+            new_x = block[0] + dx
+            new_y = block[1] + dy
+
+            # Check if block would hit screen boundaries
+            if new_y >= self.height or new_x < 0 or new_x >= self.width:
                 return True
+
             # Check if block would collide with existing blocks
             if (
-                block[1] + 1 < self.height
-                and self.grid[block[1] + 1][block[0]] is not None
+                0 <= new_y < self.height
+                and 0 <= new_x < self.width
+                and self.grid[new_y][new_x] is not None
             ):
                 return True
         return False
@@ -105,22 +106,14 @@ class GameBoard:
         )
 
     def active_tile_move_left(self):
-        # Temporarily move left and check if any blocks would be outside board
-        self.active_tile.move_left()
-        for x, y in self.active_tile.get_blocks():
-            if x < 0:
-                # Undo move if it would go outside
-                self.active_tile.move_right()
-                return
+        # Check if moving left would cause a collision
+        if not self._active_tile_will_collide(dx=-1, dy=0):
+            self.active_tile.move_left()
 
     def active_tile_move_right(self):
-        # Temporarily move right and check if any blocks would be outside board
-        self.active_tile.move_right()
-        for x, y in self.active_tile.get_blocks():
-            if x >= self.width:
-                # Undo move if it would go outside
-                self.active_tile.move_left()
-                return
+        # Check if moving right would cause a collision
+        if not self._active_tile_will_collide(dx=1, dy=0):
+            self.active_tile.move_right()
 
     def active_tile_rotate(self):
         self.active_tile.rotate()
@@ -142,5 +135,3 @@ class GameBoard:
     def active_tile_hard_drop(self):
         while not self._active_tile_will_collide():
             self.active_tile.move_down()
-        self._lock_active_tile()
-        return self._clear_rows()
